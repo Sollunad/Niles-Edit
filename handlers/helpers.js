@@ -151,12 +151,12 @@ function hourString(hour) {
 }
 
 function dayString(number) {
-  let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  let days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   return days[number];
 }
 
 function monthString(number) {
-  let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  let months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   return months[number];
 }
 
@@ -226,23 +226,9 @@ function stringDate(date, guildid, hour) {
 }
 
 function getStringTime(date) {
-  let hour = date.getHours();
+  let hour = date.getHours() + 1;
   let minutes = prependZero(date.getMinutes());
-  if (minutes === "00") {
-    if (hour <= 11) {
-      return hourString(parseInt(date.getHours(), 10)) + "AM";
-    }
-    if (hour > 11) {
-      return hourString(parseInt(date.getHours(), 10)) + "PM";
-    }
-  } else {
-    if (hour <= 11) {
-      return `${hourString(parseInt(date.getHours(),10))}:${minutes}AM`;
-    }
-    if (hour > 11) {
-      return `${hourString(parseInt(date.getHours(),10))}:${minutes}PM`;
-    }
-  }
+  return `${hour}:${minutes}`;
 }
 
 
@@ -273,11 +259,13 @@ function checkRole(message) {
 function checkPermissions(message) {
   let botPermissions = message.channel.permissionsFor(bot.client.user).serialize(true);
   let missingPermissions = "";
-  minimumPermissions.forEach(function(permission) {
-    if (!botPermissions[permission]) {
-      missingPermissions += "\n" + String(permission);
-    }
-  });
+  if (minimumPermissions) {
+    minimumPermissions.forEach(function(permission) {
+      if (!botPermissions[permission]) {
+        missingPermissions += "\n" + String(permission);
+      }
+    });
+  }
   if (missingPermissions !== "") {
     return false;
   }
@@ -287,11 +275,13 @@ function checkPermissions(message) {
 function checkPermissionsManual(message, cmd) {
   let botPermissions = message.channel.permissionsFor(bot.client.user).serialize(true);
   let missingPermissions = "";
-  minimumPermissions.forEach(function(permission) {
-    if (!botPermissions[permission]) {
-      missingPermissions += "\n" + String(permission);
-    }
-  });
+  if (minimumPermissions) {
+    minimumPermissions.forEach(function(permission) {
+      if (!botPermissions[permission]) {
+        missingPermissions += "\n" + String(permission);
+      }
+    });
+  }
   if (missingPermissions !== "") {
     return message.author.send(`Hey I noticed you tried to use the command \`\`${cmd}\`\`. I am missing the following permissions in channel **${message.channel.name}**: \`\`\`` + missingPermissions + "```" + "\nIf you want to stop getting these DMs type `!permissions 0` in this DM chat.");
   }

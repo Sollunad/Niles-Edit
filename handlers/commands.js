@@ -229,7 +229,7 @@ function generateCalendar(message, dayMap) {
   for (let i = 0; i < 7; i++) {
     let key = "day" + String(i);
     let sendString = "";
-    sendString += `\n **${helpers.dayString(dayMap[i].getDay())}** - ${helpers.monthString(dayMap[i].getMonth())} ${dayMap[i].getDate()} \n`;
+    sendString += `\n **${helpers.dayString(dayMap[i].getDay())}** - ${dayMap[i].getDate()}. ${helpers.monthString(dayMap[i].getMonth())} \n`;
     if (calendar[key].length === 0) {
       sendString += "``` ```";
     } else {
@@ -242,8 +242,8 @@ function generateCalendar(message, dayMap) {
           columns: ["time", "events"],
           config: {
             time: {
-              minWidth: 17,
-              align: "center"
+              minWidth: 14,
+              align: "left"
             },
             events: {
               minWidth: 30
@@ -262,9 +262,11 @@ function generateCalendar(message, dayMap) {
           let tempString = {};
           let tempStartDate = new Date(calendar[key][m].start.dateTime);
           tempStartDate = helpers.convertDate(tempStartDate, message.guild.id);
+          const tempStartString = helpers.getStringTime(tempStartDate);
           let tempFinDate = new Date(calendar[key][m].end.dateTime);
           tempFinDate = helpers.convertDate(tempFinDate, message.guild.id);
-          tempString[helpers.getStringTime(tempStartDate) + " - " + helpers.getStringTime(tempFinDate)] = calendar[key][m].summary;
+          const tempFinString = helpers.getStringTime(tempFinDate);
+          tempString[tempStartString + " - " + tempFinString] = calendar[key][m].summary;
           sendString += columnify(tempString, options) + "\n";
         }
       }
@@ -273,14 +275,11 @@ function generateCalendar(message, dayMap) {
     finalString += sendString;
   }
   let embed = new bot.discord.RichEmbed();
-  embed.setTitle("CALENDAR");
+  embed.setTitle("Rising Light Raids");
   embed.setURL("https://calendar.google.com/calendar/embed?src=" + guildSettings.calendarID);
-  embed.setColor("BLUE");
+  embed.setColor(14663916);
   embed.setDescription(finalString);
-  embed.setFooter("Last update");
-  if (guildSettings.helpmenu === "1") {
-    embed.addField("USING THIS CALENDAR", "To create events use ``!create`` or ``!scrim`` followed by your event details i.e. ``!scrim xeno on monday at 8pm-10pm``\n\nTo delete events use``!delete <day> <start time>`` i.e. ``!delete monday 5pm``\n\nHide this message using ``!displayoptions help 0``\n\nEnter ``!help`` for a full list of commands.", false);
-  }
+  embed.setFooter("Letztes Update");
   embed.setTimestamp(new Date());
   p.resolve(embed);
   return p.promise;
